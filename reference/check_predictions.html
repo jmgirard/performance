@@ -6,7 +6,9 @@ can be used to &quot;look for systematic discrepancies between real and
 simulated data&quot; (Gelman et al. 2014, p. 169).
 performance provides posterior predictive check methods for a variety
 of frequentist models (e.g., lm, merMod, glmmTMB, ...). For Bayesian
-models, the model is passed to bayesplot::pp_check().
+models, posterior predictions are computed with
+modelbased::estimate_prediction() and plotted with the same machinery as
+for other supported models.
 If check_predictions() doesn't work as expected, try setting
 verbose = TRUE to get hints about possible problems."><meta property="og:description" content="Posterior predictive checks mean &quot;simulating replicated data
 under the fitted model and then comparing these to the observed data&quot;
@@ -15,7 +17,9 @@ can be used to &quot;look for systematic discrepancies between real and
 simulated data&quot; (Gelman et al. 2014, p. 169).
 performance provides posterior predictive check methods for a variety
 of frequentist models (e.g., lm, merMod, glmmTMB, ...). For Bayesian
-models, the model is passed to bayesplot::pp_check().
+models, posterior predictions are computed with
+modelbased::estimate_prediction() and plotted with the same machinery as
+for other supported models.
 If check_predictions() doesn't work as expected, try setting
 verbose = TRUE to get hints about possible problems."><meta property="og:image" content="https://easystats.github.io/performance/reference/figures/card.png"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:creator" content="@easystats4u"><meta name="twitter:site" content="@easystats4u"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -80,7 +84,9 @@ can be used to "look for systematic discrepancies between real and
 simulated data" (<em>Gelman et al. 2014, p. 169</em>).</p>
 <p><strong>performance</strong> provides posterior predictive check methods for a variety
 of frequentist models (e.g., <code>lm</code>, <code>merMod</code>, <code>glmmTMB</code>, ...). For Bayesian
-models, the model is passed to <code><a href="https://mc-stan.org/bayesplot/reference/pp_check.html" class="external-link">bayesplot::pp_check()</a></code>.</p>
+models, posterior predictions are computed with
+<code><a href="https://easystats.github.io/modelbased/reference/estimate_expectation.html" class="external-link">modelbased::estimate_prediction()</a></code> and plotted with the same machinery as
+for other supported models.</p>
 <p>If <code>check_predictions()</code> doesn't work as expected, try setting
 <code>verbose = TRUE</code> to get hints about possible problems.</p>
     </div>
@@ -114,7 +120,8 @@ models, the model is passed to <code><a href="https://mc-stan.org/bayesplot/refe
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed on to downstream functions. For
 frequentist models, these are forwarded to <code><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate()</a></code>; for Bayesian models
-(e.g., <code>stanreg</code>, <code>brmsfit</code>), they are forwarded to <code><a href="https://mc-stan.org/bayesplot/reference/pp_check.html" class="external-link">bayesplot::pp_check()</a></code>.</p></dd>
+(e.g., <code>stanreg</code>, <code>brmsfit</code>), they are forwarded to
+<code><a href="https://easystats.github.io/modelbased/reference/estimate_expectation.html" class="external-link">modelbased::estimate_prediction()</a></code>.</p></dd>
 
 
 <dt id="arg-iterations">iterations<a class="anchor" aria-label="anchor" href="#arg-iterations"></a></dt>
