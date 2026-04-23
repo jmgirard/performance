@@ -493,11 +493,29 @@ check_collinearity.zerocount <- function(
 
   # Filter to true slope parameters (handles multiple intercepts in ordinal models)
   if (inherits(x, c("clm", "clmm"))) {
-    slope_names <- insight::find_parameters(x)$conditional
-    if (is.null(slope_names)) {
-      slope_names <- names(x$beta)
-    }
+    slope_names <- names(x$beta)
     keep_idx <- which(colnames(v) %in% slope_names)
+
+    # Rebuild term_assign securely to prevent NA drops for categorical predictors
+    tryCatch(
+      {
+        f_cond <- insight::find_formula(x)$conditional
+        d <- insight::get_data(x, verbose = FALSE)
+        mm <- stats::model.matrix(f_cond, data = d)
+        assign_attr <- attr(mm, "assign")
+        
+        if (!is.null(assign_attr)) {
+          if (assign_attr[1] == 0) {
+            assign_attr <- assign_attr[-1] # Drop intercept
+          }
+          if (length(assign_attr) == length(keep_idx)) {
+            term_assign <- assign_attr
+          }
+        }
+      },
+      error = function(e) NULL
+    )
+
   } else if (insight::has_intercept(x)) {
     # Standard behavior: drop the first column/row (the singular intercept)
     keep_idx <- seq_len(ncol(v))[-1]
