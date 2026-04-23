@@ -503,7 +503,6 @@ check_collinearity.zerocount <- function(
         d <- insight::get_data(x, verbose = FALSE)
         mm <- stats::model.matrix(f_cond, data = d)
         assign_attr <- attr(mm, "assign")
-        
         if (!is.null(assign_attr)) {
           if (assign_attr[1] == 0) {
             assign_attr <- assign_attr[-1] # Drop intercept
@@ -515,7 +514,6 @@ check_collinearity.zerocount <- function(
       },
       error = function(e) NULL
     )
-
   } else if (insight::has_intercept(x)) {
     # Standard behavior: drop the first column/row (the singular intercept)
     keep_idx <- seq_len(ncol(v))[-1]
