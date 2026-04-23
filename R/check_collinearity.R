@@ -491,12 +491,24 @@ check_collinearity.zerocount <- function(
     }
   }
 
-  # check for missing intercept
-  if (insight::has_intercept(x)) {
-    v <- v[-1, -1]
-    term_assign <- term_assign[-1]
-  } else if (isTRUE(verbose)) {
-    insight::format_alert("Model has no intercept. VIFs may not be sensible.")
+  # Filter to true slope parameters (handles multiple intercepts in ordinal models)
+  if (inherits(x, c("clm", "clmm"))) {
+    slope_names <- names(x$beta)
+    keep_idx <- which(colnames(v) %in% slope_names)
+  } else if (insight::has_intercept(x)) {
+    # Standard behavior: drop the first column/row (the singular intercept)
+    keep_idx <- seq_len(ncol(v))[-1]
+  } else {
+    keep_idx <- seq_len(ncol(v))
+    if (isTRUE(verbose)) {
+      insight::format_alert("Model without intercept. VIFs may not be sensible.")
+    }
+  }
+  
+  # Safely subset both the matrix and the assignment vector
+  if (length(keep_idx) < ncol(v)) {
+    v <- v[keep_idx, keep_idx, drop = FALSE]
+    term_assign <- term_assign[keep_idx]
   }
 
   f <- insight::find_formula(x, verbose = FALSE)
