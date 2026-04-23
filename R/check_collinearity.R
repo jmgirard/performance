@@ -487,14 +487,14 @@ check_collinearity.zerocount <- function(
     slope_names <- names(x$beta)
     keep_idx <- which(colnames(v) %in% slope_names)
 
-    # Rebuild term_assign to handle categorical predictors AND rank-deficiency
+    # Rebuild term_assign by matching model matrix columns to surviving slopes
     tryCatch(
       {
         mm <- insight::get_modelmatrix(x)
         assign_attr <- attr(mm, "assign")
         if (!is.null(assign_attr)) {
-          # Match surviving slopes in v to columns in the full model matrix
-          match_idx <- which(colnames(mm) %in% colnames(v)[keep_idx])
+          # Use name-matching to isolate indices for estimated slopes
+          match_idx <- which(colnames(mm) %in% slope_names)
           if (length(match_idx) > 0) {
             term_assign <- assign_attr[match_idx]
           }
@@ -514,11 +514,7 @@ check_collinearity.zerocount <- function(
 
   # Safely subset the matrix (term_assign is already synced for ordinal models)
   if (length(keep_idx) < ncol(v)) {
-    if (
-      !inherits(x, c("clm", "clmm")) &&
-        !is.null(term_assign) &&
-        length(term_assign) == ncol(v)
-    ) {
+    if (!inherits(x, c("clm", "clmm")) && !is.null(term_assign) && length(term_assign) == ncol(v)) {
       term_assign <- term_assign[keep_idx]
     }
     v <- v[keep_idx, keep_idx, drop = FALSE]
