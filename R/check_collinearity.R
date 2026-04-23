@@ -491,10 +491,12 @@ check_collinearity.zerocount <- function(
     }
   }
 
-# Filter to true slope parameters (handles multiple intercepts in ordinal models)
+  # Filter to true slope parameters (handles multiple intercepts in ordinal models)
   if (inherits(x, c("clm", "clmm"))) {
     slope_names <- insight::find_parameters(x)$conditional
-    if (is.null(slope_names)) slope_names <- names(x$beta)
+    if (is.null(slope_names)) {
+      slope_names <- names(x$beta)
+    }
     keep_idx <- which(colnames(v) %in% slope_names)
   } else if (insight::has_intercept(x)) {
     # Standard behavior: drop the first column/row (the singular intercept)
