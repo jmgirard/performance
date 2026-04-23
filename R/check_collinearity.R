@@ -514,7 +514,11 @@ check_collinearity.zerocount <- function(
 
   # Safely subset the matrix (term_assign is already synced for ordinal models)
   if (length(keep_idx) < ncol(v)) {
-    if (!inherits(x, c("clm", "clmm")) && !is.null(term_assign) && length(term_assign) == ncol(v)) {
+    if (
+      !inherits(x, c("clm", "clmm")) && 
+        !is.null(term_assign) && 
+        length(term_assign) == ncol(v)
+    ) {
       term_assign <- term_assign[keep_idx]
     }
     v <- v[keep_idx, keep_idx, drop = FALSE]
