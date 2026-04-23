@@ -481,34 +481,22 @@ check_collinearity.zerocount <- function(
     return(NULL)
   }
 
-  # we have rank-deficiency here. remove NA columns from assignment
-  if (isTRUE(attributes(v)$rank_deficient) && !is.null(attributes(v)$na_columns_index)) {
-    term_assign <- term_assign[-attributes(v)$na_columns_index]
-    if (isTRUE(verbose)) {
-      insight::format_alert(
-        "Model matrix is rank deficient. VIFs may not be sensible."
-      )
-    }
-  }
-
   # Filter to true slope parameters (handles multiple intercepts in ordinal models)
   if (inherits(x, c("clm", "clmm"))) {
+    # names(x$beta) returns only non-singular (surviving) slopes
     slope_names <- names(x$beta)
     keep_idx <- which(colnames(v) %in% slope_names)
 
-    # Rebuild term_assign securely to prevent NA drops for categorical predictors
+    # Rebuild term_assign to handle categorical predictors AND rank-deficiency
     tryCatch(
       {
-        f_cond <- insight::find_formula(x)$conditional
-        d <- insight::get_data(x, verbose = FALSE)
-        mm <- stats::model.matrix(f_cond, data = d)
+        mm <- insight::get_modelmatrix(x)
         assign_attr <- attr(mm, "assign")
         if (!is.null(assign_attr)) {
-          if (assign_attr[1] == 0) {
-            assign_attr <- assign_attr[-1] # Drop intercept
-          }
-          if (length(assign_attr) == length(keep_idx)) {
-            term_assign <- assign_attr
+          # Match surviving slopes in v to columns in the full model matrix
+          match_idx <- which(colnames(mm) %in% colnames(v)[keep_idx])
+          if (length(match_idx) > 0) {
+            term_assign <- assign_attr[match_idx]
           }
         }
       },
@@ -524,12 +512,22 @@ check_collinearity.zerocount <- function(
     }
   }
 
-  # Safely subset the matrix and the assignment vector
+  # Safely subset the matrix (term_assign is already synced for ordinal models)
   if (length(keep_idx) < ncol(v)) {
-    if (!is.null(term_assign) && length(term_assign) == ncol(v)) {
+    if (!inherits(x, c("clm", "clmm")) && !is.null(term_assign) && length(term_assign) == ncol(v)) {
       term_assign <- term_assign[keep_idx]
     }
     v <- v[keep_idx, keep_idx, drop = FALSE]
+  }
+
+  # we have rank-deficiency here. remove NA columns from assignment
+  if (isTRUE(attributes(v)$rank_deficient) && !is.null(attributes(v)$na_columns_index)) {
+    term_assign <- term_assign[-attributes(v)$na_columns_index]
+    if (isTRUE(verbose)) {
+      insight::format_alert(
+        "Model matrix is rank deficient. VIFs may not be sensible."
+      )
+    }
   }
 
   f <- insight::find_formula(x, verbose = FALSE)
