@@ -309,7 +309,6 @@ test_that("check_collinearity, ordinal clmm models", {
   x_binary <- sample(c(-0.5, 0.5), size = n, replace = TRUE, prob = c(0.85, 0.15))
   subject_id <- factor(rep(1:50, each = 10))
   random_intercepts <- rnorm(50, 0, 1)
-
   latent_y <- 2 *
     x_continuous +
     3 * x_binary +
@@ -329,4 +328,27 @@ test_that("check_collinearity, ordinal clmm models", {
   expect_s3_class(out, "check_collinearity")
   expect_identical(out$Term, c("x_continuous", "x_binary"))
   expect_equal(out$VIF, c(1.12, 1.12), tolerance = 0.05)
+})
+
+test_that("check_collinearity, ordinal clm models", {
+  skip_if_not_installed("ordinal")
+  set.seed(999)
+  n <- 500
+  x_continuous <- rnorm(n, mean = 0, sd = 1)
+  x_binary <- sample(c(-0.5, 0.5), size = n, replace = TRUE, prob = c(0.85, 0.15))
+  latent_y <- 2 * x_continuous + 3 * x_binary + rlogis(n)
+  y_ordinal <- cut(
+    latent_y,
+    breaks = 15,
+    ordered_result = TRUE
+  )
+  dat <- data.frame(y_ordinal, x_continuous, x_binary)
+  mod_clm <- ordinal::clm(
+    y_ordinal ~ x_continuous + x_binary, 
+    data = dat
+  )
+  out <- check_collinearity(mod_clm)
+  expect_s3_class(out, "check_collinearity")
+  expect_identical(out$Term, c("x_continuous", "x_binary"))
+  expect_equal(out$VIF, c(1.11, 1.11), tolerance = 0.05)
 })
