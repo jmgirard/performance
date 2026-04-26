@@ -309,10 +309,11 @@ test_that("check_collinearity, ordinal clmm models", {
   x_binary <- sample(c(-0.5, 0.5), size = n, replace = TRUE, prob = c(0.85, 0.15))
   subject_id <- factor(rep(1:50, each = 10))
   random_intercepts <- rnorm(50, 0, 1)
-  
-  latent_y <- 2 * x_continuous + 
-    3 * x_binary + 
-    random_intercepts[as.numeric(subject_id)] + 
+
+  latent_y <- 2 *
+    x_continuous +
+    3 * x_binary +
+    random_intercepts[as.numeric(subject_id)] +
     rlogis(n)
     
   y_ordinal <- cut(
