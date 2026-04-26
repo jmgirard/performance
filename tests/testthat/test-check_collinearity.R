@@ -322,7 +322,7 @@ test_that("check_collinearity, ordinal clmm models", {
   )
   dat <- data.frame(y_ordinal, x_continuous, x_binary, subject_id)
   mod_clmm <- ordinal::clmm(
-    y_ordinal ~ x_continuous + x_binary + (1 | subject_id), 
+    y_ordinal ~ x_continuous + x_binary + (1 | subject_id),
     data = dat
   )
   out <- check_collinearity(mod_clmm)
