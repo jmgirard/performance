@@ -326,7 +326,6 @@ test_that("check_collinearity, ordinal clmm models", {
     data = dat
   )
   out <- check_collinearity(mod_clmm)
-  
   expect_s3_class(out, "check_collinearity")
   expect_identical(out$Term, c("x_continuous", "x_binary"))
   expect_equal(out$VIF, c(1.12, 1.12), tolerance = 0.05)
