@@ -303,7 +303,6 @@ test_that("check_collinearity, validate adjusted vif against car", {
 
 test_that("check_collinearity, ordinal clmm models", {
   skip_if_not_installed("ordinal")
-  
   set.seed(999)
   n <- 500
   
