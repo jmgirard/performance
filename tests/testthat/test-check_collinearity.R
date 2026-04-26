@@ -305,7 +305,6 @@ test_that("check_collinearity, ordinal clmm models", {
   skip_if_not_installed("ordinal")
   set.seed(999)
   n <- 500
-  
   x_continuous <- rnorm(n, mean = 0, sd = 1)
   x_binary <- sample(c(-0.5, 0.5), size = n, replace = TRUE, prob = c(0.85, 0.15))
   subject_id <- factor(rep(1:50, each = 10))
