@@ -514,10 +514,7 @@ check_collinearity.zerocount <- function(
 
   # Safely subset the matrix
   if (length(keep_idx) < ncol(v)) {
-    if (
-      !is.null(term_assign) &&
-      length(term_assign) == ncol(v)
-    ) {
+    if (!is.null(term_assign) && length(term_assign) == ncol(v)) {
       term_assign <- term_assign[keep_idx]
     }
     v <- v[keep_idx, keep_idx, drop = FALSE]
