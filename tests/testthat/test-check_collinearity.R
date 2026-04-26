@@ -300,3 +300,37 @@ test_that("check_collinearity, validate adjusted vif against car", {
   expect_equal(out1[, 1], out2$VIF, tolerance = 1e-3, ignore_attr = TRUE)
   expect_equal(out1[, 3], out2$SE_factor, tolerance = 1e-3, ignore_attr = TRUE)
 })
+
+test_that("check_collinearity, ordinal clmm models", {
+  skip_if_not_installed("ordinal")
+  
+  set.seed(999)
+  n <- 500
+  
+  x_continuous <- rnorm(n, mean = 0, sd = 1)
+  x_binary <- sample(c(-0.5, 0.5), size = n, replace = TRUE, prob = c(0.85, 0.15))
+  subject_id <- factor(rep(1:50, each = 10))
+  random_intercepts <- rnorm(50, 0, 1)
+  
+  latent_y <- 2 * x_continuous + 
+    3 * x_binary + 
+    random_intercepts[as.numeric(subject_id)] + 
+    rlogis(n)
+    
+  y_ordinal <- cut(
+    latent_y,
+    breaks = 15,
+    ordered_result = TRUE
+  )
+  
+  dat <- data.frame(y_ordinal, x_continuous, x_binary, subject_id)
+  mod_clmm <- ordinal::clmm(
+    y_ordinal ~ x_continuous + x_binary + (1 | subject_id), 
+    data = dat
+  )
+  out <- check_collinearity(mod_clmm)
+  
+  expect_s3_class(out, "check_collinearity")
+  expect_identical(out$Term, c("x_continuous", "x_binary"))
+  expect_equal(out$VIF, c(1.12, 1.12), tolerance = 0.05)
+})
