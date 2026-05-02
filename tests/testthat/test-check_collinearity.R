@@ -362,8 +362,13 @@ test_that("check_collinearity, ordinal clmm models with offset", {
   x_offset <- rnorm(n, mean = 0, sd = 0.5)
   subject_id <- factor(rep(1:50, each = 10))
   random_intercepts <- rnorm(50, 0, 1)
-  
-  latent_y <- 2 * x_continuous + 3 * x_binary + random_intercepts[as.numeric(subject_id)] + x_offset + rlogis(n)
+
+  latent_y <- 2 *
+    x_continuous +
+    3 * x_binary +
+    random_intercepts[as.numeric(subject_id)] +
+    x_offset +
+    rlogis(n)
   y_ordinal <- cut(latent_y, breaks = 15, ordered_result = TRUE)
   
   dat <- data.frame(y_ordinal, x_continuous, x_binary, x_offset, subject_id)
