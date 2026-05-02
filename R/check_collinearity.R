@@ -572,7 +572,6 @@ check_collinearity.zerocount <- function(
   result <- vector("numeric")
   na_terms <- vector("numeric")
 
-  # sanity check - models with offset(?) may contain too many term assignments
   if (length(term_assign) > ncol(v)) {
     term_assign <- term_assign[seq_len(ncol(v))]
   }
