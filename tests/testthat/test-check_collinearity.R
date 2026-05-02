@@ -370,7 +370,6 @@ test_that("check_collinearity, ordinal clmm models with offset", {
     x_offset +
     rlogis(n)
   y_ordinal <- cut(latent_y, breaks = 15, ordered_result = TRUE)
-  
   dat <- data.frame(y_ordinal, x_continuous, x_binary, x_offset, subject_id)
   
   mod_clmm_offset <- ordinal::clmm(
