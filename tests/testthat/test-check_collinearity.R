@@ -375,7 +375,6 @@ test_that("check_collinearity, ordinal clmm models with offset", {
     y_ordinal ~ x_continuous + x_binary + offset(x_offset) + (1 | subject_id),
     data = dat
   )
-  
   out <- check_collinearity(mod_clmm_offset)
   expect_s3_class(out, "check_collinearity")
   expect_identical(out$Term, c("x_continuous", "x_binary"))
